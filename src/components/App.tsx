@@ -1,5 +1,6 @@
-import { useState , FC} from 'react';
+import { useState , FC, useCallback} from 'react';
 import styled from "styled-components";
+import { MemoList } from './MemoList';
 
 export const App: FC = () => {
 	const [memos, setMemos] = useState<string[]>([]);
@@ -16,45 +17,23 @@ export const App: FC = () => {
 		setMemo('');
 	}
 
-	const deleteMemo = (index: number) => {
+	const onClickDelete = useCallback((index: number) => {
 		const newMemos = [...memos];
 		newMemos.splice(index, 1);
 		setMemos(newMemos);
-	}
+	}, [memos]);
 
 	return (
 		<div>
 			<h1>簡単メモアプリ</h1>
 			<input value={memo} onChange={onChangeAddMemo} />
 			<SButton onClick={onSubmit}>追加</SButton>
-			<SContainer>
-				<p>メモ一覧</p>
-				<ul>
-					{memos.map((memo, index) => (
-						<li key={memo}>
-							<SMemoWrapper>
-								<p>{memo}</p>
-								<SButton onClick={()=>deleteMemo(index)}>削除</SButton>
-							</SMemoWrapper>
-						</li>
-					))}
-				</ul>
-			</SContainer>
+			<MemoList memos={memos} onClickDelete={onClickDelete} />
 		</div>
 	);
 };
 
-const SContainer = styled.div`
-	border: solid 1px #aaa;
-	margin: 10px;
-	padding: 10px;
-`
 
 const SButton = styled.button`
 	margin-left: 16px;
-`
-
-const SMemoWrapper = styled.div`
-	display: flex;
-	align-items: center;
 `
