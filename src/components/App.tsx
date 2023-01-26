@@ -1,56 +1,60 @@
-import { useState } from 'react';
+import { useState , FC} from 'react';
 import styled from "styled-components";
 
-export const App = () => {
-	const defaultMemos = [
-		{id: 1,memo: 'a',},
-		{id: 2,memo: 'b',},
-		{id: 3,memo: 'c',}
-	]
-	const [memos, setMemos] = useState(defaultMemos);
-	const [memo, setMemo] = useState('');
+export const App: FC = () => {
+	const [memos, setMemos] = useState<string[]>([]);
+	const [memo, setMemo] = useState<string>("");
 
 	const onChangeAddMemo = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const add = e.target.value;
-		setMemo(add);
+		setMemo(e.target.value);
 	}
 
 	const onSubmit = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-		e.preventDefault();
-		const addMemo = {id: Math.random(), memo: memo};
-		setMemos((prevMemos) => [...prevMemos, addMemo]);
+		const newMemos = [...memos];
+		newMemos.push(memo);
+		setMemos(newMemos);
 		setMemo('');
 	}
 
 	const deleteMemo = (index: number) => {
-		const deletedMemos = memos.filter((v) => v.id !== index);
-		setMemos(deletedMemos);
+		const newMemos = [...memos];
+		newMemos.splice(index, 1);
+		setMemos(newMemos);
 	}
 
 	return (
 		<div>
 			<h1>簡単メモアプリ</h1>
-			<form>
-				<input value={memo} onChange={(e) => onChangeAddMemo(e)} />
-				<button onClick={(e) => onSubmit(e)}>追加</button>
-			</form>
-			<Scontainer>
+			<input value={memo} onChange={onChangeAddMemo} />
+			<SButton onClick={onSubmit}>追加</SButton>
+			<SContainer>
 				<p>メモ一覧</p>
 				<ul>
-					{memos.map(memo => (
-						<li key={memo.id}>
-							{memo.memo}
-							<button onClick={(e)=>deleteMemo(memo.id)}>削除</button>
+					{memos.map((memo, index) => (
+						<li key={memo}>
+							<SMemoWrapper>
+								<p>{memo}</p>
+								<SButton onClick={()=>deleteMemo(index)}>削除</SButton>
+							</SMemoWrapper>
 						</li>
 					))}
 				</ul>
-			</Scontainer>
+			</SContainer>
 		</div>
-	)
-}
+	);
+};
 
-const Scontainer = styled.div`
+const SContainer = styled.div`
 	border: solid 1px #aaa;
 	margin: 10px;
 	padding: 10px;
+`
+
+const SButton = styled.button`
+	margin-left: 16px;
+`
+
+const SMemoWrapper = styled.div`
+	display: flex;
+	align-items: center;
 `
