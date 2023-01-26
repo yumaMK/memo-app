@@ -1,9 +1,10 @@
 import { useState , FC, useCallback} from 'react';
 import styled from "styled-components";
 import { MemoList } from './MemoList';
+import { useMemoList } from '../hooks/useMemoList';
 
 export const App: FC = () => {
-	const [memos, setMemos] = useState<string[]>([]);
+	const { memos, addTodo, deleteTodo} = useMemoList();
 	const [memo, setMemo] = useState<string>("");
 
 	const onChangeAddMemo = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -11,17 +12,13 @@ export const App: FC = () => {
 	}
 
 	const onSubmit = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-		const newMemos = [...memos];
-		newMemos.push(memo);
-		setMemos(newMemos);
+		addTodo(memo);
 		setMemo('');
 	}
 
 	const onClickDelete = useCallback((index: number) => {
-		const newMemos = [...memos];
-		newMemos.splice(index, 1);
-		setMemos(newMemos);
-	}, [memos]);
+		deleteTodo(index);
+	}, [deleteTodo]);
 
 	return (
 		<div>
